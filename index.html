@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MICRO-THUMB: 강요된 유전자</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Serif+KR:wght@300;400;600;700&family=Nanum+Myeongjo:wght@400;700;800&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Cinzel:wght@400;600;900&family=Cinzel+Decorative:wght@400;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Serif+KR:wght@300;400;600;700&family=Nanum+Myeongjo:wght@400;700;800&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Cinzel:wght@400;600;900&family=Cinzel+Decorative:wght@400;700&family=IM+Fell+English:ital@0;1&display=block" rel="stylesheet">
 <style>
 /* ===================================================
    CSS 변수 — 듀얼 시스템 팔레트
@@ -225,7 +225,7 @@ body.eden-mode #glitch-layer { display: none; }
   background-image:
     linear-gradient(180deg, rgba(1,3,14,0.72) 0%, rgba(1,4,18,0.45) 35%, rgba(1,4,20,0.55) 65%, rgba(1,3,14,0.88) 100%),
     radial-gradient(ellipse 100% 60% at 50% 50%, rgba(5,15,50,0.40) 0%, transparent 70%),
-    url('cuts_v1/cover.png');
+    url('cuts/cover.png');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -1177,7 +1177,7 @@ body.eden-mode .scene-id {
 
 .scene-title {
   font-family: var(--font-myth);
-  font-size: clamp(14px, 2.2vw, 19px);
+  font-size: 17px;
   font-weight: 600;
   letter-spacing: 0.10em;
   transition: color 0.4s, text-shadow 0.4s;
@@ -1522,6 +1522,8 @@ body.eden-mode .dialogue-box {
   color: rgba(160,185,220,0.85);
   font-style: italic;
   font-weight: 300;
+  word-break: keep-all;
+  overflow-wrap: break-word;
   transition: color 1.4s ease;
 }
 
@@ -1728,9 +1730,11 @@ body.eden-mode .choice-num { color: rgba(138,144,144,0.45); }
 
 .choice-title {
   font-weight: 600;
-  font-family: var(--font-ui);
+  font-family: 'Rajdhani', 'Noto Serif KR', sans-serif;
   font-size: 13px;
   letter-spacing: 0.04em;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .choice-effect {
@@ -2445,13 +2449,6 @@ body.eden-mode .stat-desc {
   font-family: 'Cinzel', 'Noto Serif KR', serif;
 }
 
-/* 선택지 제목 — 한글 폰트 통일 */
-.choice-title {
-  font-family: 'Noto Serif KR', 'Rajdhani', sans-serif;
-  font-weight: 600;
-  font-size: 13px;
-}
-
 /* 선택지 버튼 A/B 라벨 — Noto Serif KR 폴백 */
 .choice-num {
   font-family: 'Share Tech Mono', monospace;
@@ -2516,9 +2513,136 @@ body.eden-mode .stat-desc {
   font-family: 'Share Tech Mono', monospace;
 }
 
+/* ===================================================
+   클릭 게이트 오버레이 — 첫 상호작용 유도
+   (브라우저 자동재생 정책으로 인해, 사용자의 클릭이
+    있어야 음악 재생이 가능하므로 별도 게이트 화면을 둠)
+   =================================================== */
+#click-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  background:
+    linear-gradient(180deg, rgba(1,3,14,0.86) 0%, rgba(1,4,18,0.74) 40%, rgba(1,4,20,0.80) 65%, rgba(1,3,14,0.94) 100%),
+    radial-gradient(ellipse 100% 60% at 50% 50%, rgba(5,15,50,0.40) 0%, transparent 70%),
+    url('cuts/cover.png');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  transition: opacity 0.9s ease;
+}
+
+#click-gate.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#click-gate .gate-ring {
+  position: relative;
+  width: 108px;
+  height: 108px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#click-gate .gate-ring::before,
+#click-gate .gate-ring::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(126,184,232,0.4);
+}
+
+#click-gate .gate-ring::before {
+  animation: gateRingPulse 2.6s ease-out infinite;
+}
+
+#click-gate .gate-ring::after {
+  width: 70%;
+  height: 70%;
+  top: 15%;
+  left: 15%;
+  border-color: rgba(168,212,255,0.55);
+  animation: gateRingPulse 2.6s ease-out 1.3s infinite;
+}
+
+@keyframes gateRingPulse {
+  0%   { transform: scale(0.55); opacity: 0; }
+  15%  { opacity: 0.9; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+#click-gate .gate-glyph {
+  font-family: var(--font-myth-deco);
+  font-size: 28px;
+  color: var(--myth-gold-bright);
+  text-shadow: 0 0 18px rgba(126,184,232,0.6);
+  animation: gateGlyphBreath 2.6s ease-in-out infinite;
+}
+
+@keyframes gateGlyphBreath {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50%      { opacity: 1; transform: scale(1.08); }
+}
+
+#click-gate .gate-label-top {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.5em;
+  color: rgba(126,184,232,0.55);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+#click-gate .gate-label-main {
+  font-family: var(--font-myth);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.42em;
+  color: var(--myth-gold-bright);
+  text-shadow: 0 0 20px rgba(126,184,232,0.5);
+  text-transform: uppercase;
+  animation: gateGlyphBreath 2.6s ease-in-out infinite;
+}
+
+#click-gate .gate-label-sub {
+  margin-top: 16px;
+  font-family: var(--font-ko);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: rgba(168,184,210,0.6);
+}
+
+#click-gate .gate-rune-line {
+  position: absolute;
+  bottom: 48px;
+  font-family: var(--font-myth);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: rgba(126,184,232,0.3);
+}
+
 </style>
 </head>
 <body>
+
+<!-- 클릭 게이트 (커버 음악·타이핑 시작용) -->
+<div id="click-gate" onclick="enterCover()">
+  <div class="gate-ring"><span class="gate-glyph">✦</span></div>
+  <div class="gate-label-top">SYSTEM STANDBY</div>
+  <div class="gate-label-main">CLICK TO BEGIN</div>
+  <div class="gate-label-sub">[ 클릭 시 시작됩니다 ]</div>
+  <div class="gate-rune-line">ᛟ · TANGE UT INCIPIAS · ᛟ</div>
+</div>
 
 <!-- TTS 오디오 엘리먼트 -->
 <audio id="tts-s01-d1" src="TTS/S1_d1.mp3" preload="auto"></audio>
@@ -2738,7 +2862,8 @@ body.eden-mode .stat-desc {
         <video class="scene-video"
         loop
         muted
-        playsinline>
+        playsinline
+        preload="auto">
         <source src="video/S1.mp4" type="video/mp4">
       </video>
         <div class="visual-overlay"></div>
@@ -2771,7 +2896,7 @@ body.eden-mode .stat-desc {
         <p class="dialogue-text" id="s01-dial"></p>
       </div>
       <div class="check-notice check-info">
-        <span>▸</span> Boot_Success 확인 · 동기화율 위험 수준 — 즉각적인 데이터 수집이 필요합니다
+        <span>▸</span> Boot_Success 확인·동기화율 위험 수준(즉각적인 데이터 수집이 필요합니다)
       </div>
       <div class="choices theme-lab">
         <button class="choice-btn" onclick="chooseS01('A')">
@@ -2798,7 +2923,8 @@ body.eden-mode .stat-desc {
       <div class="scene-visual theme-waste">
         <video class="scene-video" id="video-s02"
         loop
-        playsinline>
+        playsinline
+        preload="auto">
         <source src="video/S2.mp4" type="video/mp4">
       </video>
         <div class="visual-overlay"></div>
@@ -2859,7 +2985,8 @@ body.eden-mode .stat-desc {
         <video class="scene-video"
         loop
         muted
-        playsinline>
+        playsinline
+        preload="auto">
         <source src="video/S3.mp4" type="video/mp4">
       </video>
         <div class="visual-overlay"></div>
@@ -2920,7 +3047,8 @@ body.eden-mode .stat-desc {
         <video class="scene-video"
         loop
         muted
-        playsinline>
+        playsinline
+        preload="auto">
         <source src="video/S4.mp4" type="video/mp4">
       </video>
         <div class="visual-overlay"></div>
@@ -2973,7 +3101,8 @@ body.eden-mode .stat-desc {
         <video class="scene-video"
         loop
         muted
-        playsinline>
+        playsinline
+        preload="auto">
         <source src="video/S5.mp4" type="video/mp4">
       </video>
         <div class="visual-overlay"></div>
@@ -3003,7 +3132,7 @@ body.eden-mode .stat-desc {
         <p class="dialogue-text" id="s05-dial"></p>
       </div>
       <div class="check-notice check-info">
-        <span>▸</span> <span id="s05-event-notice">[Event] Vsync +15 적용 · 관문 스캔 실행 중...</span>
+        <span>▸</span> <span id="s05-event-notice">[Event] Vsync +15 적용·관문 스캔 실행 중...</span>
       </div>
       <div class="check-notice" id="s05-check"></div>
       <div class="choices theme-eden">
@@ -3032,7 +3161,8 @@ body.eden-mode .stat-desc {
         <video class="scene-video"
         loop
         muted
-        playsinline>
+        playsinline
+        preload="auto">
         <source src="video/S5_Loop.mp4" type="video/mp4">
       </video>
         <div class="visual-overlay"></div>
@@ -3094,7 +3224,8 @@ body.eden-mode .stat-desc {
         <video class="scene-video"
         loop
         muted
-        playsinline>
+        playsinline
+        preload="auto">
         <source src="video/S6.mp4" type="video/mp4">
       </video>
         <div class="visual-overlay"></div>
@@ -3150,7 +3281,8 @@ body.eden-mode .stat-desc {
         <video class="scene-video"
         loop
         muted
-        playsinline>
+        playsinline
+        preload="auto">
         <source src="video/S7.mp4" type="video/mp4">
       </video>
         <div class="visual-overlay"></div>
@@ -3336,9 +3468,8 @@ async function runTypingEffect() {
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-window.addEventListener('DOMContentLoaded', () => {
-  runTypingEffect();
-});
+/* 타이핑 효과 및 커버 음악은 click-gate 클릭 시(enterCover())
+   사용자 상호작용과 동시에 시작됨 — 브라우저 자동재생 정책 대응 */
 
 /* =======================================================
    게임 상태
@@ -3364,7 +3495,7 @@ const SCENE_TEXT = {
   },
   s03: {
     narr: '강철 절벽 위, 날개가 꺾인 채 멈춰선 정찰 기체 \'오리진\'을 발견합니다.\n그는 하늘을 그리워하던 한 마리의 제비처럼 처량하게 노이즈를 뿜고 있습니다.',
-    dial: '[ 오리진의 손상된 음성 모듈이 끊기며 재생됩니다. ]\n\n"ㄷㅔ이ㅌ... 전ㅅㅗㅇ... 불가... 날ㄱ가... 움직ㄱ이ㅈㅣ 안ㅎ아... 누ㄱ군가 나ㄹ를 도와주ㄴ다면,\n저 노ㅍ은 에덴ㄲㅏ지 데ㄹ다줄 수 이ㅅ을 테ㄴ데..."\n\n[ 오리진의 광학 센서가 당신을 향합니다.\n기다리는 눈빛입니다. ]\n\n"...혼자서는 거기까지 못 갈 것 같았어. 나도."'
+    dial: '[ 오리진의 음성 모듈이 끊기며 재생됩니다. ]\n\n"ㄷㅔ이ㅌ... 전ㅅㅗㅇ... 불가... 날ㄱ가... 움직ㄱ이ㅈㅣ 안ㅎ아... 누ㄱ군가 나ㄹ를 도와주ㄴ다면,\n저 노ㅍ은 에덴ㄲㅏ지 데ㄹ다줄 수 이ㅅ을 테ㄴ데..."\n\n[ 오리진의 광학 센서가 당신을 향합니다.\n기다리는 눈빛입니다. ]\n\n"...혼자서는 거기까지 못 갈 것 같았어. 나도."'
   },
   s04: {
     dial: '[ 당신은 에덴의 빛 앞에 멈춰 섭니다. ]\n\n[ 저 빛 속에 녹아든 누군가의 유전자가,\n지금 당신을 비추고 있습니다. ]\n\n"...아름다워. 그래서 더 나쁘다."\n\n[ 주먹을 쥡니다. ]\n\n"가자..."'
@@ -3687,23 +3818,8 @@ function playGlassShatter(onComplete) {
 /* =======================================================
    S02 비디오 볼륨 설정 (대사가 잘 들리도록 낮춤)
    ======================================================= */
-window.addEventListener('DOMContentLoaded', () => {
-  // 커버 음악: 페이지 로드 즉시 시도
-  startCoverMusic();
-
-  // 브라우저 정책으로 차단된 경우 첫 클릭/키 입력 시 재생
-  // — 단, 이미 게임이 시작된 경우(start-screen이 숨겨진 경우)에는 재생 안 함
-  function onFirstInteraction() {
-    document.removeEventListener('click', onFirstInteraction);
-    document.removeEventListener('keydown', onFirstInteraction);
-    const ss = document.getElementById('start-screen');
-    if (ss && !ss.classList.contains('hidden') && ss.style.display !== 'none') {
-      startCoverMusic();
-    }
-  }
-  document.addEventListener('click', onFirstInteraction);
-  document.addEventListener('keydown', onFirstInteraction);
-});
+/* 커버 음악은 click-gate 클릭 시(enterCover())에 시작됨 —
+   브라우저 자동재생 정책으로 사용자 상호작용 없이는 재생이 막히기 때문 */
 
 /* =======================================================
    TTS 설정 — 씬별 대사 파일 & 재생 시간(초)
@@ -3957,7 +4073,14 @@ function _goSceneRaw(id) {
       } else {
         activeVideo.muted = true;
       }
-      activeVideo.play();
+      // readyState 체크 후 재생 — 로딩 전이면 canplaythrough 대기
+      const tryPlayVideo = () => activeVideo.play().catch(() => {});
+      if (activeVideo.readyState >= 3) {
+        tryPlayVideo();
+      } else {
+        activeVideo.addEventListener('canplay', tryPlayVideo, { once: true });
+        activeVideo.load();
+      }
     }
 
     // ── SFX/BGM 재생 ──
@@ -4077,14 +4200,23 @@ function stopAllAudio() {
   });
 }
 
-/* ── 씬 SFX 단일 재생 ── */
+/* ── 씬 SFX 단일 재생 (로딩 미완료 시 canplaythrough 대기) ── */
 function playSceneSFX(audioId, { loop = false, volume = 1.0 } = {}) {
   const audio = document.getElementById(audioId);
   if (!audio) return;
   audio.loop = loop;
   audio.volume = volume;
   audio.currentTime = 0;
-  audio.play().catch(() => {});
+
+  const tryPlay = () => audio.play().catch(() => {});
+
+  // readyState 4(HAVE_ENOUGH_DATA)면 즉시 재생, 아니면 로드될 때까지 대기
+  if (audio.readyState >= 4) {
+    tryPlay();
+  } else {
+    audio.addEventListener('canplaythrough', tryPlay, { once: true });
+    audio.load(); // GitHub Pages에서 preload가 지연된 경우 강제 로드 트리거
+  }
   _currentSceneSFX = audio;
 }
 
@@ -4115,7 +4247,14 @@ function startCoverMusic() {
   audio.volume = 0.7;
   audio.loop = true;
   audio.currentTime = 0;
-  audio.play().catch(() => {});
+
+  const tryPlay = () => audio.play().catch(() => {});
+  if (audio.readyState >= 4) {
+    tryPlay();
+  } else {
+    audio.addEventListener('canplaythrough', tryPlay, { once: true });
+    audio.load();
+  }
 }
 
 function stopCoverMusic() {
@@ -4123,6 +4262,24 @@ function stopCoverMusic() {
   if (!audio) return;
   audio.pause();
   audio.currentTime = 0;
+}
+
+/* ── 클릭 게이트: 사용자 클릭과 동시에 음악 + 타이핑 시작 ── */
+let _gateEntered = false;
+function enterCover() {
+  if (_gateEntered) return;
+  _gateEntered = true;
+
+  // 사용자 제스처 컨텍스트 안에서 즉시 재생 시도 (자동재생 정책 통과)
+  startCoverMusic();
+
+  const gate = document.getElementById('click-gate');
+  if (gate) {
+    gate.classList.add('hidden');
+    setTimeout(() => { gate.style.display = 'none'; }, 900);
+  }
+
+  runTypingEffect();
 }
 
 /* =======================================================
@@ -4468,9 +4625,9 @@ function chooseS01(choice) {
   }
   setTimeout(() => {
     if (STATE.Cnet < 10) {
-      setCheck('s02-check', `Cnet(신용) = ${STATE.Cnet} &lt; 10 · 토드가 즉시 선공 태세 — 경계 필요`, 'check-warn');
+      setCheck('s02-check', `Cnet(신용) = ${STATE.Cnet} &lt; 10, 토드가 즉시 선공 태세(경계 필요)`, 'check-warn');
     } else {
-      setCheck('s02-check', `Cnet(신용) = ${STATE.Cnet} ≥ 10 · 토드와 거래 가능 상태`, 'check-ok');
+      setCheck('s02-check', `Cnet(신용) = ${STATE.Cnet} ≥ 10, 토드와 거래 가능 상태`, 'check-ok');
     }
     goScene('s02');
   }, 200);
@@ -4485,9 +4642,9 @@ function chooseS02(choice) {
   }
   setTimeout(() => {
     if (STATE.D >= 15) {
-      setCheck('s03-check', `D(비인간성) = ${STATE.D} ≥ 15 · 오리진이 경계 모드 진입`, 'check-warn');
+      setCheck('s03-check', `D(비인간성) = ${STATE.D} ≥ 15, 오리진이 경계 모드 진입`, 'check-warn');
     } else {
-      setCheck('s03-check', `D(비인간성) = ${STATE.D} &lt; 15 · 오리진이 구조 요청 전송 중`, 'check-ok');
+      setCheck('s03-check', `D(비인간성) = ${STATE.D} &lt; 15, 오리진이 구조 요청 전송 중`, 'check-ok');
     }
     goScene('s03');
   }, 200);
@@ -4502,8 +4659,8 @@ function chooseS03(choice) {
   }
   setTimeout(() => {
     const routeText = STATE.Route === '공생'
-      ? `Route = 공생 · 비행 경로 활성화 — 오리진과 함께 에덴으로`
-      : `Route = 강탈 · 지상 돌파 경로 활성화 — 단독으로 에덴으로`;
+      ? `Route = 공생·비행 경로 활성화(오리진과 함께 에덴으로)`
+      : `Route = 강탈·지상 돌파 경로 활성화(단독으로 에덴으로)`;
     const routeType = STATE.Route === '공생' ? 'check-ok' : 'check-warn';
     setCheck('s04-check', routeText, routeType);
     showSceneIntro('s04', () => {
@@ -4523,9 +4680,9 @@ function chooseS04(choice) {
     goScene('s05');
     setTimeout(() => {
       if (STATE.Cnet >= 20) {
-        setCheck('s05-check', `Cnet(신용) = ${STATE.Cnet} ≥ 20 · 시민 승인 가능 상태`, 'check-ok');
+        setCheck('s05-check', `Cnet(신용) = ${STATE.Cnet} ≥ 20, 시민 승인 가능 상태`, 'check-ok');
       } else {
-        setCheck('s05-check', `Cnet(신용) = ${STATE.Cnet} &lt; 20 · 주의 — 자격 미달, 추격전 위험`, 'check-warn');
+        setCheck('s05-check', `Cnet(신용) = ${STATE.Cnet} &lt; 20, 주의 — 자격 미달(추격전 위험)`, 'check-warn');
       }
     }, 100);
   }, 200);
@@ -4551,9 +4708,9 @@ function chooseS05Loop(choice) {
     applyStats({ Vsync: -20, Cnet: 20 });
     setTimeout(() => {
       if (STATE.Cnet >= 20) {
-        setCheck('s05-check', `Cnet(신용) = ${STATE.Cnet} ≥ 20 · 재시도 — 시민 승인 가능`, 'check-ok');
+        setCheck('s05-check', `Cnet(신용) = ${STATE.Cnet} ≥ 20, 재시도(시민 승인 가능)`, 'check-ok');
       } else {
-        setCheck('s05-check', `Cnet(신용) = ${STATE.Cnet} &lt; 20 · 여전히 자격 미달...`, 'check-warn');
+        setCheck('s05-check', `Cnet(신용) = ${STATE.Cnet} &lt; 20, 여전히 자격 미달..`, 'check-warn');
       }
       goScene('s05');
     }, 300);
@@ -4565,9 +4722,9 @@ function chooseS05Loop(choice) {
 
 function prepareS06() {
   if (STATE.D < 20) {
-    setCheck('s06-check', `D(비인간성) = ${STATE.D} &lt; 20 · 아담이 당신에게 흥미를 느낍니다`, 'check-info');
+    setCheck('s06-check', `D(비인간성) = ${STATE.D} &lt; 20, 아담이 당신에게 흥미를 느낍니다`, 'check-info');
   } else {
-    setCheck('s06-check', `D(비인간성) = ${STATE.D} ≥ 20 · 아담이 실망스러운 표정을 짓습니다`, 'check-warn');
+    setCheck('s06-check', `D(비인간성) = ${STATE.D} ≥ 20, 아담이 실망스러운 표정을 짓습니다`, 'check-warn');
   }
   goScene('s06');
 }
@@ -4581,9 +4738,9 @@ function chooseS06(choice) {
   }
   setTimeout(() => {
     if (STATE.Vsync >= 70) {
-      setCheck('s07-vsync-check', `Vsync(동기화) = ${STATE.Vsync} ≥ 70 · 동기화 유지력 강함 — 강제 동기화 저항 가능`, 'check-ok');
+      setCheck('s07-vsync-check', `Vsync(동기화) = ${STATE.Vsync} ≥ 70, 동기화 유지력 강함(강제 동기화 저항 가능)`, 'check-ok');
     } else {
-      setCheck('s07-vsync-check', `Vsync(동기화) = ${STATE.Vsync} &lt; 70 · 동기화 왜곡 위험 — 빔에 취약한 상태`, 'check-warn');
+      setCheck('s07-vsync-check', `Vsync(동기화) = ${STATE.Vsync} &lt; 70, 동기화 왜곡 위험(빔에 취약한 상태)`, 'check-warn');
     }
     const bEffect = document.getElementById('s07-b-effect');
     if (bEffect) {
@@ -4640,23 +4797,23 @@ updateHUD();
 <!-- 버튼 클릭 효과음 -->
 <audio id="sfx-cursor" src="SFX/cursor.mp3" preload="auto"></audio>
 <!-- 메인표지 배경음 -->
-<audio id="sfx-cover" src="SFX/cover.mp3" loop></audio>
+<audio id="sfx-cover" src="SFX/cover.mp3" loop preload="auto"></audio>
 <!-- S1 배경음 (mp4 오디오) -->
-<audio id="sfx-s1" src="SFX/S1.mp4" loop></audio>
+<audio id="sfx-s1" src="SFX/S1.mp4" loop preload="auto"></audio>
 <!-- S3 효과음 -->
-<audio id="sfx-s3" src="SFX/S3.mp3" loop></audio>
+<audio id="sfx-s3" src="SFX/S3.mp3" loop preload="auto"></audio>
 <!-- S4 효과음 -->
-<audio id="sfx-s4" src="SFX/S4.mp3"></audio>
+<audio id="sfx-s4" src="SFX/S4.mp3" preload="auto"></audio>
 <!-- S5 효과음 -->
-<audio id="sfx-s5" src="SFX/S5.mp3"></audio>
+<audio id="sfx-s5" src="SFX/S5.mp3" preload="auto"></audio>
 <!-- S5_Loop 배경음 (mp4 오디오) -->
-<audio id="sfx-s5loop" src="SFX/S5_Loop.mp3" loop></audio>
+<audio id="sfx-s5loop" src="SFX/S5_Loop.mp3" loop preload="auto"></audio>
 <!-- S7 배경음 (mp4 오디오) -->
-<audio id="sfx-s7" src="SFX/S7.mp4" loop></audio>
+<audio id="sfx-s7" src="SFX/S7.mp4" loop preload="auto"></audio>
 <!-- GameOver / END_B 음악 (비디오부터 텍스트패널까지 끊김없이) -->
-<audio id="sfx-gameover-endb" src="SFX/GameOver, END_B.mp3" loop></audio>
+<audio id="sfx-gameover-endb" src="SFX/GameOver, END_B.mp3" loop preload="auto"></audio>
 <!-- END_A 음악 (비디오부터 텍스트패널까지 끊김없이) -->
-<audio id="sfx-enda" src="SFX/END_A.mp4" loop></audio>
+<audio id="sfx-enda" src="SFX/END_A.mp4" loop preload="auto"></audio>
 
 <!-- 게임 오버 -->
 <div id="gameover-overlay">
